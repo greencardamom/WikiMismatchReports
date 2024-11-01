@@ -1,12 +1,12 @@
-#!/usr/local/bin/gawk -bE     
+#!/usr/bin/gawk -bE     
 
 #
-# fambot - bot description
+# flmbot - bot description
 #
 
 # The MIT License (MIT)
 #    
-# Copyright (c) December 2021
+# Copyright (c) December 2024
 #   
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,13 @@
 
 BEGIN { # Bot cfg
 
-  _defaults = "home      = /home/greenc/toolforge/fambot/ \
+  _defaults = "home      = /home/greenc/toolforge/flmbot/ \
                emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
                version   = 1.0 \
                copyright = 2024"
 
   asplit(G, _defaults, "[ ]*[=][ ]*", "[ ]{9,}")
-  BotName = "fambot"
+  BotName = "flmbot"
   Home = G["home"]
   Engine = 3
 
@@ -42,7 +42,7 @@ BEGIN { # Bot cfg
 
   G["data"] = G["home"] "data/"
   G["meta"] = G["home"] "meta/"
-  G["logfile"] = G["meta"] "logfambot"
+  G["logfile"] = G["meta"] "logflmbot"
 
 }
 
@@ -164,57 +164,47 @@ function report(  list,i,a,k,opend,closed) {
   print "" > G["data"] "report"
   print "{{Documentation}}" >> G["data"] "report"
 
-  print "== In [[:Category:Featured articles]] but not [[:Category:Wikipedia featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
-  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listwfa " G["data"] "listfa")))
+  print "== In [[:Category:Featured lists]] but not [[:Category:Wikipedia featured lists]] ==" >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listwfl " G["data"] "listfl")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     print "# [[:" a[i] "]]" >> G["data"] "report"
     Sweep[a[i]] = 1
   }
-  #print closed >> G["data"] "report"
 
-  print "\n== In [[:Category:Wikipedia featured articles]] but not in [[:Category:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
-  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfa " G["data"] "listwfa")))
+  print "\n== In [[:Category:Wikipedia featured lists]] but not in [[:Category:Featured lists]] ==" >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfl " G["data"] "listwfl")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     print "# [[:Talk:" a[i] "]]" >> G["data"] "report"
     Sweep[a[i]] = 1
   }
-  #print closed >> G["data"] "report"
 
-  print "\n== In [[:Category:Featured articles]] but not on [[:Wikipedia:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
-  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfaa " G["data"] "listfa")))
+  print "\n== In [[:Category:Featured lists]] but not on [[:Wikipedia:Featured lists]] ==" >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfla " G["data"] "listfl")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     if( isinredir(a[i]) == 0 ) {
       print "# [[:" a[i] "]]" >> G["data"] "report"
       Sweep[a[i]] = 1
     }
   }
-  #print closed >> G["data"] "report"
 
-  print "\n== In [[:Wikipedia:Featured articles]] but not in [[:Category:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
-  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfa " G["data"] "listfaa")))
+  print "\n== In [[:Wikipedia:Featured lists]] but not in [[:Category:Featured lists]] ==" >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfl " G["data"] "listfla")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     if( Redirs[a[i]] == 0 ) {
       print "# [[:" a[i] "]]" >> G["data"] "report"
       Sweep[a[i]] = 1
     }
   }
-  #print closed >> G["data"] "report"
 
-  print "\n== Redirects in [[:Wikipedia:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  print "\n== Redirects in [[:Wikipedia:Featured lists]] ==" >> G["data"] "report"
   for(k in Redirs) {
     if(Redirs[k] != 0 && k !~ "-Hydroxy β-methylbutyric acid") {
       print "# [[:" k "]] --> [[:" Redirs[k] "]]" >> G["data"] "report"
       Sweep[k] = 1
     }
   }
-  #print closed >> G["data"] "report"
 
-  print "\n{{ombox | text = Report generated " curtime("space") " by '''[[User:GreenC bot/Job 15|fambot]]'''.}}" >> G["data"] "report"
+  print "\n{{ombox | text = Report generated " curtime("space") " by '''[[User:GreenC bot/Job 15|flmbot]]'''.}}" >> G["data"] "report"
  
 }
 
@@ -242,11 +232,8 @@ function isredirect(namewiki,  jsonin,jsona,command) {
   command = "https://en.wikipedia.org/w/api.php?action=query&titles=" urlencodeawk(strip(namewiki)) "&prop=info&formatversion=2&format=json"
   jsonin = http2var(command)
   if( query_json(jsonin, jsona) >= 0) {
-    if(jsona["query","pages","1","redirect"] == 1) {
-      #if(namewiki ~ "Hydroxy")
-      #  sendlog(G["logfile"], "isredirect() ---- " command " ---- " jsonin)
+    if(jsona["query","pages","1","redirect"] == 1) 
       return 1
-    }
   }
   return 0
 }
@@ -268,13 +255,13 @@ function whatisredirect(namewiki,  jsonin,jsona,command) {
 }
 
 #
-# Populate Redirs[] with titles in listfaa that are redirects
+# Populate Redirs[] with titles in listfla that are redirects
 #
 function getredirects( pos,i,a) {
 
-  # If in Featured articles/all but not Category:Featured articles
+  # If in Featured lists/all but not Category:Featured lists
   # Check each for redirect 
-  pos = sys2var(Exe["grep"] " -vxF -f " G["data"] "listfa " G["data"] "listfaa")  
+  pos = sys2var(Exe["grep"] " -vxF -f " G["data"] "listfl " G["data"] "listfla")  
   for(i = 1; i <= splitn(pos "\n", a, i); i++) {
     if(isredirect(a[i])) 
       Redirs[a[i]] = whatisredirect(a[i])
@@ -285,13 +272,17 @@ function getredirects( pos,i,a) {
 }
 
 #
-# Get articles in Wikipedia:Featured articles
+# Get articles in Wikipedia:Featured lists
 #
-function getlistfaa(   fp,k,i,a,spot,dest,result,command,firstsect,re,d) {
+function getlistfla(   fp,k,i,a,spot,dest,result,command,firstsect,re,d) {
 
-  fp = wikiget(Exe["wikiget"] " -w " shquote("Wikipedia:Featured articles") )
+  fp = wikiget(Exe["wikiget"] " -w " shquote("Wikipedia:Featured lists") )
   if(empty(fp)) 
     return ""
+
+
+  # This block doesn't work in Featured lists, because the section index is different from the section titles! 
+  # For now just hard-coding for parsing to start at "__NOTOC__"
 
   for(i = 1; i <= splitn(fp, a, i); i++) {
     # [[#Art, architecture, and archaeology|Art, architecture, and archaeology]
@@ -311,17 +302,20 @@ function getlistfaa(   fp,k,i,a,spot,dest,result,command,firstsect,re,d) {
   }
 
   k = 1
-  re = "^==[ ]*" regesc3(firstsect) "[ ]*==[ ]*$"
+  # re = "^==[ ]*" regesc3(firstsect) "[ ]*==[ ]*$"
+  re = "__NOTOC__"
 
   for(i = 1; i <= splitn(fp, a, i); i++) {
     if(spot == 0 && a[i] ~ re) 
       spot = 1
     if(spot) {
 
-      # * [[...]]|{{FA/...}}
-      # "[[...]]|{{FA/...}}
-      # ''[[...]]|{{FA/...}}
-      if(a[i] ~ /^[ ]*([']{1,5}|["]|[*])?[ ]*([{]{2}FA[/]|[[]{2})/) {
+      a[i] = stripwikicomments(a[i])
+
+      # * [[...]]|{{FL/...}}
+      # "[[...]]|{{FL/...}}
+      # ''[[...]]|{{FL/...}}
+      if(a[i] ~ /^[ ]*([']{1,5}|["]|[*])?[ ]*([{]{2}FL[/]|[[]{2})/) {
 
         if(match(a[i], /[[]{2}[^\]|]+[^\]|]/, d) > 0) {
           sub(/^[[]{2}/, "", d[0])
@@ -333,7 +327,7 @@ function getlistfaa(   fp,k,i,a,spot,dest,result,command,firstsect,re,d) {
   }
 
   if(!length(result)) {
-    sendlog(G["logfile"], curtime() " ---- Empty result[] for Wikipedia:Featured_articles. Breakpoint B")
+    sendlog(G["logfile"], curtime() " ---- Empty result[] for Wikipedia:Featured_lists. Breakpoint B")
     return ""
   }
  
@@ -352,45 +346,42 @@ function getlistfaa(   fp,k,i,a,spot,dest,result,command,firstsect,re,d) {
 #
 # Get lists
 #
-function getlists(   listwfa,listfa,listfaa) {
+function getlists(   listwfl,listfl,listfla) {
 
-  # Category:Wikipedia featured articles
+  # Category:Wikipedia featured lists
 
-  listwfa = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Wikipedia featured articles") ))
-  #listwfa = readfile(G["data"] "listwfa")
-  if(empty(listwfa)) 
-    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_featured_articles")
+  listwfl = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Wikipedia featured lists") " | " Exe["grep"] " -vE " shquote("(Wikipedia:|Template:)") ))
+  if(empty(listwfl)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_featured_lists")
 
-  # Category:Featured articles
+  # Category:Featured lists
 
-  listfa = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Featured articles") ))
-  #listfa = readfile(G["data"] "listfa")
-  if(empty(listfa)) 
-    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Featured_articles")
+  listfl = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Featured lists") " | " Exe["grep"] " -vE " shquote("(Wikipedia:|Template:)") ))
+  if(empty(listfl)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Featured_lists")
 
-  # Wikipedia:Featured articles
+  # Wikipedia:Featured lists
 
-  listfaa = clearnl(getlistfaa())
-  #listfaa = readfile(G["data"] "listfaa")
-  if(empty(listfaa)) 
-    sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Featured_articles")
+  listfla = clearnl(getlistfla())
+  if(empty(listfla)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Featured_lists")
 
-  if( countsubstring(listwfa, "\n") < 6000 || countsubstring(listfa, "\n") < 6000 || countsubstring(listfaa, "\n") < 6000) {
+  if( countsubstring(listwfl, "\n") < 4000 || countsubstring(listfl, "\n") < 4000 || countsubstring(listfla, "\n") < 4000) {
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
-    #print listwfa > G["meta"] "listwfa"
-    #print listfa > G["meta"] "listfa"
-    #print listfaa > G["meta"] "listfaa"
-    if(countsubstring(listfaa, "\n") < 6000 && countsubstring(listfa, "\n") > 6000 && countsubstring(listfaa, "\n") > 6000) {
-      print "Bot error: trouble parsing [[Wikipedia:Featured articles]] - page format changed? Please contact [[User:GreenC]]" > G["data"] "report"
+    #print listwfl > G["meta"] "listwfa"
+    #print listfl > G["meta"] "listfa"
+    #print listfla > G["meta"] "listfaa"
+    if(countsubstring(listfla, "\n") < 4000 && countsubstring(listfl, "\n") > 4000 && countsubstring(listfla, "\n") > 4000) {
+      print "Bot error: trouble parsing [[Wikipedia:Featured lists]] - page format changed? Please contact [[User:GreenC]]" > G["data"] "report"
       close(G["data"] "report")
-      upload(readfile(G["data"] "report"), "Wikipedia:Featured articles/mismatches", "Bot error: trouble parsing [[Wikipedia:Featured articles]]", G["meta"], BotName, "en")
+      upload(readfile(G["data"] "report"), "Wikipedia:Featured lists/mismatches", "Bot error: trouble parsing [[Wikipedia:Featured lists]]", G["meta"], BotName, "en")
     }
     exit
   }
 
-  print listwfa > G["data"] "listwfa"; close(G["data"] "listwfa")
-  print listfa > G["data"] "listfa"; close(G["data"] "listfa")
-  print listfaa > G["data"] "listfaa"; close(G["data"] "listfaa")
+  print listwfl > G["data"] "listwfl"; close(G["data"] "listwfl")
+  print listfl > G["data"] "listfl"; close(G["data"] "listfl")
+  print listfla > G["data"] "listfla"; close(G["data"] "listfla")
 
 }
 
@@ -404,16 +395,14 @@ function main(  ls) {
   ls = int(length(Sweep))
   if(ls > 0) {
     if(ls < 2)
-      G["summary"] = "1 page needs help (report by [[User:GreenC bot/Job 15|fambot]])"
+      G["summary"] = "1 page needs help (report by [[User:GreenC bot/Job 15|flmbot]])"
     else
-      G["summary"] = "ls " pages need help (report by [[User:GreenC bot/Job 15|fambot]]"
+      G["summary"] = ls " pages need help (report by [[User:GreenC bot/Job 15|flmbot]]"
   }
   else
-    G["summary"] = "No problems detected (report by [[User:GreenC bot/Job 15|fambot]])"
+    G["summary"] = "No problems detected (report by [[User:GreenC bot/Job 15|flmbot]])"
 
   close(G["data"] "report")
-  upload(readfile(G["data"] "report"), "Wikipedia:Featured articles/mismatches", G["summary"], G["meta"], BotName, "en")
+  upload(readfile(G["data"] "report"), "Wikipedia:Featured lists/mismatches", G["summary"], G["meta"], BotName, "en")
 
 }
-
-

@@ -1,9 +1,10 @@
 FaGaMbot
 ===========
-* fambot - Featured Article Mismatch Bot
-* gambot - Good Article Mismatch Bot
+* fambot - Featured articles Mismatch Bot
+* gambot - Good articles Mismatch Bot
+* flmbot - Featured lists Mismatch Bot
 
-Two bots that monitor various pages and categories on Enwiki and report when there is a problem with the configurations for Featured and Good articles
+Three bots that monitor various pages and categories on Enwiki and report when there is a problem with the configurations for Featured and Good articles
 
 Install
 ==========
@@ -19,13 +20,14 @@ Install
         git clone 'https://github.com/greencardamom/BotWikiAwk'
         export AWKPATH=.:/home/user/BotWikiAwk/lib:/usr/share/awk
         export PATH=$PATH:/home/user/BotWikiAwk/bin
+	add above AWKPATH and PATH to your shell's login script eg. .bashrc
         cd ~/BotWikiAwk
         ./setup.sh
         read SETUP for further instructions eg. setting up email
 
 * Configure wikiget.awk which was installed with BotWikiAwk - add Oauth Consumer Secrets so you can post to Wikipedia. See the file "EDITSETUP" at https://github.com/greencardamom/Wikiget
 
-* Edit fambot.awk and gambot.awk and change the home directory
+* Edit fambot.awk, gambot.awk and flmbot.awk and change the home directory
 
 Running
 ==========

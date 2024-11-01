@@ -29,6 +29,7 @@
 BEGIN { # Bot cfg
 
   _defaults = "home      = /home/greenc/toolforge/gambot/ \
+               emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
                summary   = Report updated (by [[User:GreenC bot/Job 15|gambot]]) \
                version   = 1.0 \
                copyright = 2024"
@@ -52,7 +53,7 @@ BEGIN { # Bot cfg
 
 BEGIN { # Bot run
 
-  G["email"] = readfile("/home/greenc/toolforge/scripts/secrets/greenc.email")
+  G["email"] = readfile(G["emailfp"])
   Agent = "Ask me about " BotName " - " G["email"]
 
   main()
@@ -64,8 +65,8 @@ BEGIN { # Bot run
 #
 function curtime(  style) {
   if(!empty(style))
-    return sys2var(Exe["date"] " +\"%Y-%m-%d at %H:%M:%S\"")
-  return sys2var(Exe["date"] " +\"%Y-%m-%dT%H:%M:%S\"")
+    return sys2var(Exe["date"] " -u +\"%Y-%m-%d at %H:%M:%S\"")
+  return sys2var(Exe["date"] " -u +\"%Y-%m-%dT%H:%M:%S\"")
 }
 
 #
@@ -267,7 +268,7 @@ function getredirects( pos,i,a) {
 #
 # Get articles in Wikipedia:Good_articles/all
 #
-function getlistgaa(   fp,k,i,a,spot,dest,result,command) {
+function getlistgaa(   fp,k,i,a,b,d,spot,dest,result,command) {
 
 # Wikipedia:Good_articles/all
 ## <!-- Do not remove this line, LivingBot relies on it to distinguish the above from the below. Thanks. -->
@@ -282,15 +283,24 @@ function getlistgaa(   fp,k,i,a,spot,dest,result,command) {
 
   k = 1
   for(i = 1; i <= splitn(fp "\n", a, i); i++) {
-    if(spot == 0 && a[i] ~ /Do not remove this line, LivingBot relies on it/) 
+    if(spot == 0 && a[i] ~ /==[ ]*Contents?[ ]*==/)
       spot = 1
     if(spot) {
-      if(match(a[i], /[{]{2}[ ]*(Wikipedia|WP)[:][ ]*Good articles\/[^}]+[}][}]/, dest) ) {
-        gsub(/^[ ]*[{]{2}[ ]*|[ ]*[}]{2}[ ]*$/, "", dest[0])
-        result[k++] = strip(dest[0])
+      if(a[i] ~ "*[ ]*[[]{2}") {
+        if(match(a[i], /[[]{2}[^]]*[^]]/, d) > 0) {
+          sub("^[[]{2}", "", d[0])
+          split(d[0], b, "[|]")
+          if(b[1] ~ "^#")
+            b[1] = "Wikipedia:Good articles/all" b[1]
+          result[k++] = strip(b[1])
+        }
       }
     }
+    if(a[i] ~ /[{]{2}endplainlist[}]{2}/)
+      spot = 0
+
   }
+
   if(!length(result)) {
     sendlog(G["logfile"], curtime() " ---- Empty result[] for Wikipedia:Good_articles/all. Breakpoint B")
     return ""
@@ -352,8 +362,12 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listgaa))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Good_articles")    
 
-  if( countsubstring(listwga, "\n") < 28000 || countsubstring(listga, "\n") < 28000 || countsubstring(listgaa, "\n") < 28000) {
+  if( countsubstring(listwga, "\n") < 38000 || countsubstring(listga, "\n") < 38000 || countsubstring(listgaa, "\n") < 38000) {
+    #print "listwga " countsubstring(listwga, "\n")
+    #print "listga " countsubstring(listga, "\n")
+    #print "listgaa " countsubstring(listgaa, "\n")
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
+    email(Exe["from_email"], Exe["to_email"], "NOTIFY: " BotName " - List(s) too short. Program aborted", "")
     exit
   }
 
