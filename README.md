@@ -20,7 +20,7 @@ Install
         git clone 'https://github.com/greencardamom/BotWikiAwk'
         export AWKPATH=.:/home/user/BotWikiAwk/lib:/usr/share/awk
         export PATH=$PATH:/home/user/BotWikiAwk/bin
-	add above AWKPATH and PATH to your shell's login script eg. .bashrc
+        add above AWKPATH and PATH to your shell's login script eg. .bashrc
         cd ~/BotWikiAwk
         ./setup.sh
         read SETUP for further instructions eg. setting up email
