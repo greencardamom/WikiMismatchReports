@@ -1,4 +1,4 @@
-FaGaMbot
+WikiMismatchReports
 ===========
 * fambot - Featured articles Mismatch Bot
 * gambot - Good articles Mismatch Bot
@@ -12,7 +12,7 @@ Install
 * Clone the repo
 
         cd ~
-        git clone 'https://github.com/greencardamom/FaGaMbot'
+        git clone 'https://github.com/greencardamom/WikiMismatchReports'
 
 * Install BotWikiAwk library
 
