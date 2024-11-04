@@ -406,7 +406,7 @@ function main(  ls) {
     if(ls < 2)
       G["summary"] = "1 page needs help (report by [[User:GreenC bot/Job 15|fambot]])"
     else
-      G["summary"] = "ls " pages need help (report by [[User:GreenC bot/Job 15|fambot]]"
+      G["summary"] = ls " pages need help (report by [[User:GreenC bot/Job 15|fambot]]"
   }
   else
     G["summary"] = "No problems detected (report by [[User:GreenC bot/Job 15|fambot]])"
