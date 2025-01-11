@@ -43,4 +43,4 @@ Credits
 ==================
 by User:GreenC (en.wikipedia.org)
 
-MIT License Copyright 2024
+MIT License Copyright 2025

@@ -6,7 +6,7 @@
 
 # The MIT License (MIT)
 #    
-# Copyright (c) April 2019
+# Copyright (c) April 2019-2025
 #   
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ BEGIN { # Bot cfg
                emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
                summary   = Report updated (by [[User:GreenC bot/Job 15|gambot]]) \
                version   = 1.0 \
-               copyright = 2024"
+               copyright = 2025"
 
   asplit(G, _defaults, "[ ]*[=][ ]*", "[ ]{9,}")
   BotName = "gambot"

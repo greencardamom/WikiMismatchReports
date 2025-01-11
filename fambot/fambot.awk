@@ -6,7 +6,7 @@
 
 # The MIT License (MIT)
 #    
-# Copyright (c) December 2021
+# Copyright (c) December 2021-2025
 #   
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@ BEGIN { # Bot cfg
 
   _defaults = "home      = /home/greenc/toolforge/fambot/ \
                emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
-               version   = 1.0 \
-               copyright = 2024"
+               version   = 1.1 \
+               copyright = 2025"
 
   asplit(G, _defaults, "[ ]*[=][ ]*", "[ ]{9,}")
   BotName = "fambot"
@@ -156,8 +156,9 @@ function wikiget(command,  i,fp) {
 #
 # Generate report
 #
-function report(  list,i,a,k,opend,closed) {
+function report(  list,i,a,k,opend,closed,usecol) {
 
+  usecol = 0
   opend  = "{{div col|colwidth=20em}}"
   closed = "{{div col end}}"
 
@@ -165,25 +166,25 @@ function report(  list,i,a,k,opend,closed) {
   print "{{Documentation}}" >> G["data"] "report"
 
   print "== In [[:Category:Featured articles]] but not [[:Category:Wikipedia featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
   list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listwfa " G["data"] "listfa")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     print "# [[:" a[i] "]]" >> G["data"] "report"
     Sweep[a[i]] = 1
   }
-  #print closed >> G["data"] "report"
+  if(usecol) print closed >> G["data"] "report"
 
   print "\n== In [[:Category:Wikipedia featured articles]] but not in [[:Category:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
   list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfa " G["data"] "listwfa")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     print "# [[:Talk:" a[i] "]]" >> G["data"] "report"
     Sweep[a[i]] = 1
   }
-  #print closed >> G["data"] "report"
+  if(usecol) print closed >> G["data"] "report"
 
   print "\n== In [[:Category:Featured articles]] but not on [[:Wikipedia:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
   list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfaa " G["data"] "listfa")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     if( isinredir(a[i]) == 0 ) {
@@ -191,10 +192,21 @@ function report(  list,i,a,k,opend,closed) {
       Sweep[a[i]] = 1
     }
   }
-  #print closed >> G["data"] "report"
+  if(usecol) print closed >> G["data"] "report"
+
+  print "\n== In [[:Category:Wikipedia featured article candidates]] but not on [[:Wikipedia:Featured article candidates]] ==" >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfac " G["data"] "listwfac")))
+  for(i = 1; i <= splitn(list "\n", a, i); i++) {
+    if( isinredir(a[i]) == 0 ) {
+      print "# [[:" a[i] "]]" >> G["data"] "report"
+      Sweep[a[i]] = 1
+    }
+  }
+  if(usecol) print closed >> G["data"] "report"
 
   print "\n== In [[:Wikipedia:Featured articles]] but not in [[:Category:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
   list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfa " G["data"] "listfaa")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
     if( Redirs[a[i]] == 0 ) {
@@ -202,17 +214,17 @@ function report(  list,i,a,k,opend,closed) {
       Sweep[a[i]] = 1
     }
   }
-  #print closed >> G["data"] "report"
+  if(usecol) print closed >> G["data"] "report"
 
   print "\n== Redirects in [[:Wikipedia:Featured articles]] ==" >> G["data"] "report"
-  #print opend >> G["data"] "report"
+  if(usecol) print opend >> G["data"] "report"
   for(k in Redirs) {
     if(Redirs[k] != 0 && k !~ "-Hydroxy β-methylbutyric acid") {
       print "# [[:" k "]] --> [[:" Redirs[k] "]]" >> G["data"] "report"
       Sweep[k] = 1
     }
   }
-  #print closed >> G["data"] "report"
+  if(usecol) print closed >> G["data"] "report"
 
   print "\n{{ombox | text = Report generated " curtime("space") " by '''[[User:GreenC bot/Job 15|fambot]]'''.}}" >> G["data"] "report"
  
@@ -283,6 +295,36 @@ function getredirects( pos,i,a) {
   }
 
 }
+
+#
+# Get articles in Wikipedia:Featured article candidates
+#
+function getlistfac(   fp,field,sep,i,result,c) {
+
+  fp = wikiget(Exe["wikiget"] " -w " shquote("Wikipedia:Featured article candidates") )
+  if(empty(fp)) 
+    return ""
+
+  # {{Wikipedia:Featured article candidates/Svalbard discography/archive1}}
+  c = patsplit(fp, field, /[{]{2}Wikipedia:Featured article candidates\/[^}]*[}]{2}/, sep)
+  for(i = 1; i <= c; i++) {
+    if(field[i] !~ /\/archive[0-9]/) continue
+    sub(/[{]{2}[ ]*Wikipedia:Featured[ _]article[ _]candidates\//, "", field[i])
+    sub(/\/archive[0-9][ ]*[}]{2}$/, "", field[i])
+    result = result "\n" field[i]
+  }
+  result = strip(result)
+
+  if(!length(result)) {
+    sendlog(G["logfile"], curtime() " ---- Empty result[] for Wikipedia:Featured_article_candiates. Breakpoint A")
+    return ""
+  }
+ 
+  return result   
+ 
+}
+
+
 
 #
 # Get articles in Wikipedia:Featured articles
@@ -368,6 +410,18 @@ function getlists(   listwfa,listfa,listfaa) {
   if(empty(listfa)) 
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Featured_articles")
 
+  # Category:Wikipedia featured article candidates
+
+  listwfac = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Wikipedia featured article candidates") " | " Exe["grep"] " -vE " shquote("(Wikipedia:|Template:)") ))
+  if(empty(listwfac)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_featured_article_candidates")
+
+  # Wikipedia:Featured article candidates
+
+  listfac = clearnl(getlistfac())
+  if(empty(listfac)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Featured_article_candidates")
+
   # Wikipedia:Featured articles
 
   listfaa = clearnl(getlistfaa())
@@ -388,9 +442,11 @@ function getlists(   listwfa,listfa,listfaa) {
     exit
   }
 
-  print listwfa > G["data"] "listwfa"; close(G["data"] "listwfa")
-  print listfa > G["data"] "listfa"; close(G["data"] "listfa")
-  print listfaa > G["data"] "listfaa"; close(G["data"] "listfaa")
+  print listwfa  > G["data"] "listwfa";  close(G["data"] "listwfa")
+  print listfa   > G["data"] "listfa";   close(G["data"] "listfa")
+  print listwfac > G["data"] "listwfac"; close(G["data"] "listwfac")
+  print listfac  > G["data"] "listfac";  close(G["data"] "listfac")
+  print listfaa  > G["data"] "listfaa";  close(G["data"] "listfaa")
 
 }
 

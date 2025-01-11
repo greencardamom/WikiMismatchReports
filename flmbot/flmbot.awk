@@ -6,7 +6,7 @@
 
 # The MIT License (MIT)
 #    
-# Copyright (c) December 2024
+# Copyright (c) December 2024-2025
 #   
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@ BEGIN { # Bot cfg
 
   _defaults = "home      = /home/greenc/toolforge/flmbot/ \
                emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
-               version   = 1.0 \
-               copyright = 2024"
+               version   = 1.1 \
+               copyright = 2025"
 
   asplit(G, _defaults, "[ ]*[=][ ]*", "[ ]{9,}")
   BotName = "flmbot"
@@ -187,6 +187,15 @@ function report(  list,i,a,k,opend,closed) {
     }
   }
 
+  print "\n== In [[:Category:Wikipedia featured list candidates]] but not on [[:Wikipedia:Featured list candidates]] ==" >> G["data"] "report"
+  list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listflc " G["data"] "listwflc")))
+  for(i = 1; i <= splitn(list "\n", a, i); i++) {
+    if( isinredir(a[i]) == 0 ) {
+      print "# [[:" a[i] "]]" >> G["data"] "report"
+      Sweep[a[i]] = 1
+    }
+  }
+
   print "\n== In [[:Wikipedia:Featured lists]] but not in [[:Category:Featured lists]] ==" >> G["data"] "report"
   list = sorta(uniq(sys2var(Exe["grep"] " -vxF -f " G["data"] "listfl " G["data"] "listfla")))
   for(i = 1; i <= splitn(list "\n", a, i); i++) {
@@ -270,6 +279,35 @@ function getredirects( pos,i,a) {
   }
 
 }
+
+#
+# Get articles in Wikipedia:Featured list candidates
+#
+function getlistflc(   fp,field,sep,i,result,c) {
+
+  fp = wikiget(Exe["wikiget"] " -w " shquote("Wikipedia:Featured list candidates") )
+  if(empty(fp)) 
+    return ""
+
+  # {{Wikipedia:Featured list candidates/Svalbard discography/archive1}}
+  c = patsplit(fp, field, /[{]{2}Wikipedia:Featured list candidates\/[^}]*[}]{2}/, sep)
+  for(i = 1; i <= c; i++) {
+    if(field[i] !~ /\/archive[0-9]/) continue
+    sub(/[{]{2}[ ]*Wikipedia:Featured[ _]list[ _]candidates\//, "", field[i])
+    sub(/\/archive[0-9][ ]*[}]{2}$/, "", field[i])
+    result = result "\n" field[i]
+  }
+  result = strip(result)
+
+  if(!length(result)) {
+    sendlog(G["logfile"], curtime() " ---- Empty result[] for Wikipedia:Featured_list_candiates. Breakpoint A")
+    return ""
+  }
+ 
+  return result
+
+}
+
 
 #
 # Get articles in Wikipedia:Featured lists
@@ -360,6 +398,18 @@ function getlists(   listwfl,listfl,listfla) {
   if(empty(listfl)) 
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Featured_lists")
 
+  # Category:Wikipedia featured list candidates
+
+  listwflc = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Wikipedia featured list candidates") " | " Exe["grep"] " -vE " shquote("(Wikipedia:|Template:)") ))
+  if(empty(listwflc)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_featured_list_candidates")
+
+  # Wikipedia:Featured list candidates
+
+  listflc = clearnl(getlistflc())
+  if(empty(listflc)) 
+    sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Featured_list_candidates")
+
   # Wikipedia:Featured lists
 
   listfla = clearnl(getlistfla())
@@ -380,6 +430,8 @@ function getlists(   listwfl,listfl,listfla) {
   }
 
   print listwfl > G["data"] "listwfl"; close(G["data"] "listwfl")
+  print listwflc > G["data"] "listwflc"; close(G["data"] "listwflc")
+  print listflc > G["data"] "listflc"; close(G["data"] "listflc")
   print listfl > G["data"] "listfl"; close(G["data"] "listfl")
   print listfla > G["data"] "listfla"; close(G["data"] "listfla")
 
