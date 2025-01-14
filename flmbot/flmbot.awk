@@ -455,6 +455,6 @@ function main(  ls) {
     G["summary"] = "No problems detected (report by [[User:GreenC bot/Job 15|flmbot]])"
 
   close(G["data"] "report")
-  #upload(readfile(G["data"] "report"), "Wikipedia:Featured lists/mismatches", G["summary"], G["meta"], BotName, "en")
+  upload(readfile(G["data"] "report"), "Wikipedia:Featured lists/mismatches", G["summary"], G["meta"], BotName, "en")
 
 }
