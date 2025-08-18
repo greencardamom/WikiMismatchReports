@@ -362,6 +362,7 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listgaa))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Good_articles")    
 
+
   if( countsubstring(listwga, "\n") < 38000 || countsubstring(listga, "\n") < 38000 || countsubstring(listgaa, "\n") < 38000) {
     #print "listwga " countsubstring(listwga, "\n")
     #print "listga " countsubstring(listga, "\n")
