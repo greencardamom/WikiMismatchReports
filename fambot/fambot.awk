@@ -37,12 +37,21 @@ BEGIN { # Bot cfg
   BotName = "fambot"
   Home = G["home"]
   Engine = 3
+  Agent = "fambot acre User:GreenC @ enwiki"
 
   IGNORECASE = 1
 
   G["data"] = G["home"] "data/"
   G["meta"] = G["home"] "meta/"
   G["logfile"] = G["meta"] "logfambot"
+
+  # Note: B-Hydroxy β-methylbutyric acid is a PITA. Couple things need to be maintained
+  #
+  #       1. WP:Featured_articles need to have a line like this:
+  #          {{FA/BeenOnMainPage|[[Β-Hydroxy β-methylbutyric acid|β-Hydroxy β-methylbutyric<!-- Do not modify this line without first discussing with User:GreenC --> acid]]}}
+  #       2. Notice the leading "B" is not Latin B, it is Greek Β. They visually look exactly the same but not.
+  #       3. This program has some special code for dealing with redirects search on "hydroxy" - not sure it's still needed
+  #       4. There is a redirect for the Latin B version on-wiki that might need to be maintained - not sure it's still needed
 
 }
 

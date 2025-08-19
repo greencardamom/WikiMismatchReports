@@ -38,6 +38,7 @@ BEGIN { # Bot cfg
   BotName = "gambot"
   Home = G["home"]
   Engine = 3
+  Agent = "gambot acre User:GreenC @ enwiki"
 
   IGNORECASE = 1
 
