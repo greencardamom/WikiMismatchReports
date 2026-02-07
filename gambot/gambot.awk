@@ -365,11 +365,12 @@ function getlists(   listwga,listga,listgaa) {
 
 
   if( countsubstring(listwga, "\n") < 38000 || countsubstring(listga, "\n") < 38000 || countsubstring(listgaa, "\n") < 38000) {
-    #print "listwga " countsubstring(listwga, "\n")
-    #print "listga " countsubstring(listga, "\n")
-    #print "listgaa " countsubstring(listgaa, "\n")
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
-    email(Exe["from_email"], Exe["to_email"], "NOTIFY: " BotName " - List(s) too short. Program aborted", "")
+    print "___________________ ---- listwga ---- " countsubstring(listwga, "\n") >> G["logfile"]
+    print "___________________ ---- listga ---- " countsubstring(listga, "\n") >> G["logfile"]
+    print "___________________ ---- listgaa ---- " countsubstring(listgaa, "\n") >> G["logfile"]
+    close(G["logfile"])
+    email(Exe["from_email"], Exe["to_email"], "NOTIFY: " BotName " - List(s) too short. Program aborted. See " G["home"] "meta/loggambot", "")
     exit
   }
 
