@@ -349,12 +349,16 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listwga))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_good_articles")
 
+  stdErr("listwga = " countsubstring(listwga, "\n"))
+
   # Category:Good articles
 
   listga = clearnl(wikiget(Exe["wikiget"] " -c " shquote("Good articles") ))
   #listga = readfile(G["data"] "listga")
   if(empty(listga))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Good_articles")
+
+  stdErr("listga = " countsubstring(listga, "\n"))
 
   # Wikipedia:Good articles
 
@@ -363,6 +367,7 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listgaa))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Good_articles")    
 
+  stdErr("listgaa = " countsubstring(listgaa, "\n"))
 
   if( countsubstring(listwga, "\n") < 38000 || countsubstring(listga, "\n") < 38000 || countsubstring(listgaa, "\n") < 38000) {
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
@@ -384,13 +389,17 @@ function getlists(   listwga,listga,listgaa) {
 
 }
 
-function main() {
+function main(  res) {
 
   getlists()
   getredirects()
   report()
   close(G["data"] "report")
-  upload(readfile(G["data"] "report"), "Wikipedia:Good articles/mismatches", G["summary"], G["meta"], BotName, "en")
+  res = upload(readfile(G["data"] "report"), "Wikipedia:Good articles/mismatches", G["summary"], G["meta"], BotName, "en")
+  if(res)
+    print sys2var(Exe["date"] " +\"%Y%m%d-%H:%M:%S\"") " ---- success" >> G["meta"] "upload"
+  else
+    print sys2var(Exe["date"] " +\"%Y%m%d-%H:%M:%S\"") " ---- failed" >> G["meta"] "upload"
 
 }
 
