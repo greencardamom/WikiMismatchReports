@@ -30,6 +30,7 @@ BEGIN { # Bot cfg
 
   _defaults = "home      = /home/greenc/toolforge/flmbot/ \
                emailfp   = /home/greenc/toolforge/scripts/secrets/greenc.email \
+               userid    = User:GreenC \
                version   = 1.1 \
                copyright = 2025"
 
@@ -37,7 +38,9 @@ BEGIN { # Bot cfg
   BotName = "flmbot"
   Home = G["home"]
   Engine = 3
-  Agent = "flmbot acre User:GreenC @ enwiki"
+
+  # Agent string format non-compliance could result in 429 (too many requests) rejections by WMF API
+  Agent = BotName "-" G["version"] "-" G["copyright"] " (" G["userid"] "; mailto:" strip(readfile(G["emailfp"])) ")"
 
   IGNORECASE = 1
 
@@ -52,9 +55,6 @@ BEGIN { # Bot cfg
 @include "json.awk"
 
 BEGIN { # Bot run
-
-  G["email"] = readfile(G["emailfp"])
-  Agent = "Ask me about " BotName " - " G["email"]
 
   main()
 }
