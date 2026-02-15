@@ -58,8 +58,22 @@ BEGIN { # Bot cfg
 BEGIN { # Bot run
 
   main()
+  healthcheckwatch()
 
 }
+
+#
+# https://github.com/greencardamom/HealthcheckWatch
+# acre:[/home/greenc/toolforge/healthcheckwatch]
+#
+function healthcheckwatch(  command) {
+
+  command = "/usr/bin/curl -s -X POST " shquote("https://healthcheckwatch.wbcqanjidyjcjbe.workers.dev/ping/acre-gambot") " -H " shquote("Authorization: Bearer Xn*izT%(^pI8J/q+Mn*ipT%(^pI9J/q") " -H " shquote("Content-Type: application/json") " -d " shquote("{ \"timeout\": 75, \"subject\": \"NOTIFY (HCW): gambot.awk\", \"body\": \"acre: /home/greenc/toolforge/gambot/gambot.awk (no response)\" }")
+  system(command)
+  exit
+
+}
+
 
 #
 # Current time
