@@ -363,7 +363,7 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listwga))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Wikipedia_good_articles")
 
-  stdErr("listwga = " countsubstring(listwga, "\n"))
+  # stdErr("listwga = " countsubstring(listwga, "\n"))
 
   # Category:Good articles
 
@@ -372,7 +372,7 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listga))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Category:Good_articles")
 
-  stdErr("listga = " countsubstring(listga, "\n"))
+  # stdErr("listga = " countsubstring(listga, "\n"))
 
   # Wikipedia:Good articles
 
@@ -381,7 +381,7 @@ function getlists(   listwga,listga,listgaa) {
   if(empty(listgaa))
     sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Good_articles")    
 
-  stdErr("listgaa = " countsubstring(listgaa, "\n"))
+  # stdErr("listgaa = " countsubstring(listgaa, "\n"))
 
   if( countsubstring(listwga, "\n") < 38000 || countsubstring(listga, "\n") < 38000 || countsubstring(listgaa, "\n") < 38000) {
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
