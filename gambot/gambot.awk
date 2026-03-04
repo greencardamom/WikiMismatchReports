@@ -63,17 +63,19 @@ BEGIN { # Bot run
 }
 
 #
-# https://github.com/greencardamom/HealthcheckWatch
-# acre:[/home/greenc/toolforge/healthcheckwatch]
+# Ping Healthcheckwatch API
 #
-function healthcheckwatch(  command) {
+# Git: https://github.com/greencardamom/HealthcheckWatch
+# Install: acre:[/home/greenc/toolforge/healthcheckwatch]
+# Library: ~/BotWikiAwk/lib/syscfg.awk
+# Wrapper: ~/scripts/healthcheckwatchping.sh
+#
+function healthcheckwatch() {
 
-  command = "/usr/bin/curl -s -X POST " shquote("https://healthcheckwatch.wbcqanjidyjcjbe.workers.dev/ping/acre-gambot") " -H " shquote("Authorization: Bearer Xn*izT%(^pI8J/q+Mn*ipT%(^pI9J/q") " -H " shquote("Content-Type: application/json") " -d " shquote("{ \"timeout\": 75, \"subject\": \"NOTIFY (HCW): gambot.awk\", \"body\": \"acre: /home/greenc/toolforge/gambot/gambot.awk (no response)\" }")
-  system(command)
+  hcw_ping("acre-gambot", 75, "NOTIFY (HCW): gambot.awk", "acre: /home/greenc/toolforge/gambot/gambot.awk (no response)")
   exit
 
 }
-
 
 #
 # Current time
