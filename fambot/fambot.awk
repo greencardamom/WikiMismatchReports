@@ -455,6 +455,14 @@ function getlists(   listwfa,listfa,listfaa) {
   if(empty(listfaa)) 
     sendlog(G["logfile"], curtime() " ---- Empty fp for Wikipedia:Featured_articles")
 
+
+  if( countsubstring(listwfa, "\n") < 6000)
+    stdErr("listwfa too short: " countsubstring(listwfa, "\n"))
+  if( countsubstring(listfa, "\n") < 6000)
+    stdErr("listfa too short: " countsubstring(listfa, "\n"))
+  if( countsubstring(listfaa, "\n") < 6000)
+    stdErr("listfaa too short: " countsubstring(listfaa, "\n"))
+
   if( countsubstring(listwfa, "\n") < 6000 || countsubstring(listfa, "\n") < 6000 || countsubstring(listfaa, "\n") < 6000) {
     sendlog(G["logfile"], curtime() " ---- List(s) too short. Program Aborted.")
     #print listwfa > G["meta"] "listwfa"
