@@ -305,11 +305,14 @@ function getlistgaa(   fp,k,i,a,b,d,spot,dest,result,command) {
     if(spot) {
       if(a[i] ~ "*[ ]*[[]{2}") {
         if(match(a[i], /[[]{2}[^]]*[^]]/, d) > 0) {
-          sub("^[[]{2}", "", d[0])
+
           split(d[0], b, "[|]")
-          if(b[1] ~ "^#")
-            b[1] = "Wikipedia:Good articles/all" b[1]
+          if(b[1] ~ /#/) {
+            sub(/^.*#/, "", b[1])
+            b[1] = "Wikipedia:Good articles/" b[1]
+          }
           result[k++] = strip(b[1])
+
         }
       }
     }
