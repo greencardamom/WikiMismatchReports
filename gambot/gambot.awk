@@ -303,7 +303,7 @@ function getlistgaa(   fp,k,i,a,b,d,spot,dest,result,command) {
     if(spot == 0 && a[i] ~ /==[ ]*Contents?[ ]*==/)
       spot = 1
     if(spot) {
-      if(a[i] ~ "*[ ]*[[]{2}") {
+      if(a[i] ~ "[*][ ]*[[]{2}") {
         if(match(a[i], /[[]{2}[^]]*[^]]/, d) > 0) {
 
           split(d[0], b, "[|]")
